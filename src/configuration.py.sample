@@ -1,0 +1,7 @@
+# Empty template of configuration file for notifier
+
+def configure(schedulerEngine):
+	""" Create all datasource and notifier here and associate them,
+		this method is called by main program when backend is ready and
+		datasource executor have not been started yet. """
+	pass
