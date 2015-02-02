@@ -1,19 +1,17 @@
 import sched
 import logging
+import time
 import sys
 
 def execute_single_update(schedulingEngine, datasource):
 	""" Execute datasource update and listener """
-	logging.info('execute update of %s', datasource.id)
-	# Re schedule datasource
-	schedulingEngine.getScheduler().enter(datasource.getSchedulePeriod(),
-		1, execute_single_update, kwargs = {
-			'schedulingEngine': schedulingEngine,
-			'datasource': datasource
-		})
-
-	# Call update and then notify if needed
 	try:
+		logging.info('execute update of %s', datasource.id)
+		# Re schedule datasource
+		schedulingEngine.getScheduler().enter(datasource.getSchedulePeriod(),
+			1, execute_single_update, argument = [schedulingEngine, datasource])
+
+		# Call update and then notify if needed
 		if datasource.update():
 			datasource.notify()
 	except:
@@ -25,7 +23,7 @@ class SchedulingEngine(object):
 	""" Schedule datasource for execution """
 
 	def __init__(self):
-		self.scheduler = sched.scheduler()
+		self.scheduler = sched.scheduler(time.time, time.sleep)
 
 	def scheduleDataSource(self, datasource, period):
 		""" Schedule a data source update every period, where
