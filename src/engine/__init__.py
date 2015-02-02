@@ -1,9 +1,10 @@
 import sched
+import logging
 import sys
 
 def execute_single_update(schedulingEngine, datasource):
 	""" Execute datasource update and listener """
-	print('execute update of', datasource.id)
+	logging.info('execute update of %s', datasource.id)
 	# Re schedule datasource
 	schedulingEngine.getScheduler().enter(datasource.getSchedulePeriod(),
 		1, execute_single_update, kwargs = {
@@ -16,8 +17,7 @@ def execute_single_update(schedulingEngine, datasource):
 		if datasource.update():
 			datasource.notify()
 	except:
-		print("Unexpected error:", sys.exc_info()[0])
-		print("Traceback error:", sys.exc_info()[2])
+		logging.exception('Unexpected error in datasource')
 
 
 # Use python scheduler for scheduling datasource

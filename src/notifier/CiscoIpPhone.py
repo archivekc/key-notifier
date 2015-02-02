@@ -5,6 +5,7 @@ from datasource import FilterListener
 import http.client
 import urllib.request
 import os
+import logging
 import random
 
 # FIXME this not covered by Unit test
@@ -17,7 +18,7 @@ class CiscoIpPhoneBackgroundServer(BaseHTTPRequestHandler):
 		super(CiscoIpPhoneBackgroundServer, self).__init__(request, client_address, server)
 
 	def do_GET(self):
-		print('Receive get request')
+		logging.info('Receive get request')
 		try:
 			self.send_response(200)
 			self.send_header("Content-type", "image/bmp")
@@ -28,7 +29,7 @@ class CiscoIpPhoneBackgroundServer(BaseHTTPRequestHandler):
 			self.wfile.write(f.read())
 			f.close()
 		except Exception as exp:
-			print("Exception occured while serving client", exp)
+			logging.exception("Exception occured while serving client")
 			self.send_error(404,'File Not Found')
 
 def _startBackgroundServer(ip, port, backgroundDir):
@@ -103,7 +104,7 @@ class CiscoIpPhoneNotifier(FilterListener):
 
 	# do Action on filter
 	def doAction(self, rawDataSource):
-		print ('CiscoNotifier receive event from', rawDataSource.getId())
+		logging.info ('CiscoNotifier receive event from %s', rawDataSource.getId())
 		change = False
 		if rawDataSource.getId() in self.dsOutput:
 			change = self.dsOutput[rawDataSource.getId()]['value'] != rawDataSource.getValue()
@@ -112,7 +113,7 @@ class CiscoIpPhoneNotifier(FilterListener):
 			self.notifyClient()
 
 	def doFilter(self, rawDataSource):
-		print ('CiscoNotifier receive filter event on', rawDataSource.id)
+		logging.info ('CiscoNotifier receive filter event on %s', rawDataSource.id)
 		change = False
 		if rawDataSource.getId() in self.dsOutput:
 			change = self.dsOutput[rawDataSource.getId()]['value'] != None
@@ -144,5 +145,5 @@ class CiscoIpPhoneNotifier(FilterListener):
 			try:
 				urllib.request.urlopen("http://" + distant['client'] + "/admin/bcisco.csc", queryPayload)
 			except Exception as exp:
-				print("http://" + distant['client'] + "/admin/bcisco.csc")
-				print('Exception while notify client: ', exp)
+				logging.error("http://" + distant['client'] + "/admin/bcisco.csc")
+				logging.exception('Exception while notify client')

@@ -1,5 +1,6 @@
 from datasource import RawDataSource
 import urllib.request
+import logging
 from xml.dom import minidom, Node
 
 class RSSNumberOfItemDataSource(RawDataSource):
@@ -21,7 +22,7 @@ class RSSNumberOfItemDataSource(RawDataSource):
 			items = xmldoc.getElementsByTagName('item')
 			nodeCount = len(items)
 		except Exception as exp:
-			print('RSS datasource update failure: ', exp)
+			logging.exception('RSS datasource update failure')
 
 		return nodeCount
 
