@@ -17,6 +17,7 @@ def execute_single_update(schedulingEngine, datasource):
 			datasource.notify()
 	except:
 		print("Unexpected error:", sys.exc_info()[0])
+		print("Traceback error:", sys.exc_info()[2])
 
 
 # Use python scheduler for scheduling datasource
