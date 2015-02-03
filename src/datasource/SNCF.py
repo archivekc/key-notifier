@@ -69,7 +69,10 @@ class SNCFDataSource(RawDataSource):
 		return False
 
 	def getValue(self):
-		value = self.result[1][:4] + ": " + self.result[0]
-		if self.result[2]:
-			value = value + ' R: ' + self.result[2]
-		return value
+		if self.result:
+			value = self.result[1][:4] + ": " + self.result[0]
+			if self.result[2]:
+				value = value + ' R: ' + self.result[2]
+			return value
+		else:
+			return None

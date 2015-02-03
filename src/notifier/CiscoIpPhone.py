@@ -103,7 +103,7 @@ class CiscoIpPhoneNotifier(FilterListener):
 		self.lines[lineScreen].append(datasourceId)
 
 	# do Action on filter
-	def doAction(self, rawDataSource):
+	def doAction(self, rawDataSource, status):
 		logging.info ('CiscoNotifier receive event from %s', rawDataSource.getId())
 		change = False
 		if rawDataSource.getId() in self.dsOutput:
@@ -112,7 +112,7 @@ class CiscoIpPhoneNotifier(FilterListener):
 		if change:
 			self.notifyClient()
 
-	def doFilter(self, rawDataSource):
+	def doFilter(self, rawDataSource, status):
 		logging.info ('CiscoNotifier receive filter event on %s', rawDataSource.id)
 		change = False
 		if rawDataSource.getId() in self.dsOutput:

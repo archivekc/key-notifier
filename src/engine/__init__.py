@@ -12,8 +12,8 @@ def execute_single_update(schedulingEngine, datasource):
 			1, execute_single_update, argument = [schedulingEngine, datasource])
 
 		# Call update and then notify if needed
-		if datasource.update():
-			datasource.notify()
+		status = datasource.update()
+		datasource.notify(status)
 	except:
 		logging.exception('Unexpected error in datasource')
 

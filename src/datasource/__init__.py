@@ -3,7 +3,7 @@ class Listener(object):
       datasource update
   """
 
-  def doAction(self, rawDataSource):
+  def doAction(self, rawDataSource, status):
     """ Called every time a datasource that have this listener succeed
       a update call """
     pass
@@ -13,7 +13,7 @@ class FilterListener(Listener):
     filtered
   """
 
-  def doFilter(self, rawDataSource):
+  def doFilter(self, rawDataSource, status):
     pass
 
 class DataSource(object):
@@ -27,10 +27,10 @@ class DataSource(object):
     """ Register a listener, will be called every time update return True. """
     self.listeners.append(listener);
 
-  def notify(self):
+  def notify(self, status):
     """ Notify all listener """
     for listener in self.listeners:
-      listener.doAction(self)
+      listener.doAction(self, status)
 
 
 
@@ -78,24 +78,24 @@ class FilterDataSource(DataSource, FilterListener):
     super(FilterDataSource, self).__init__()
     filteredDataSource.register(self)
 
-  def doAction(self, filteredDataSource):
+  def doAction(self, filteredDataSource, status):
     if not self.filter(filteredDataSource):
-      self.notify(filteredDataSource)
+      self.notify(filteredDataSource, status)
     else:
-      self.notifyFiltered(filteredDataSource)
+      self.notifyFiltered(filteredDataSource, status)
 
-  def doFilter(self, rawDataSource):
-    self.notifyFiltered(rawDataSource)
+  def doFilter(self, rawDataSource, status):
+    self.notifyFiltered(rawDataSource, status)
 
-  def notifyFiltered(self, rawDataSource):
+  def notifyFiltered(self, rawDataSource, status):
     for listener in self.listeners:
       if isinstance(listener, FilterListener):
-        listener.doFilter(rawDataSource)
+        listener.doFilter(rawDataSource, status)
 
-  def notify(self, rawDataSource):
+  def notify(self, rawDataSource, status):
     """ Notify all listener """
     for listener in self.listeners:
-      listener.doAction(rawDataSource)
+      listener.doAction(rawDataSource, status)
 
   def filter(self, dataSource):
     """ return True and listeners will not be notify even if raw datasource
