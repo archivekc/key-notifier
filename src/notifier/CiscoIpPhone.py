@@ -83,12 +83,14 @@ class CiscoIpPhoneNotifier(FilterListener):
 		# Id use to make the url different every time or phone will not change background
 		self.randomId = random.randint(0, 10000)
 
-	def addClient(self, host, idUrl, idType):
-		""" Add a phone to client """
+	def addClient(self, host, idUrl, idType, uri="/admin/bcisco.csc"):
+		""" Add a phone to client
+			uri : use /admin/bsipura.spa with old Linksys firmware """
 		self.clients.append({
 			'client': host,
 			'idUrl': idUrl,
-			'idType': idType
+			'idType': idType,
+			'uri': uri
 		})
 
 	def listen(self, datasourceId, lineScreen, prefix):
@@ -143,7 +145,7 @@ class CiscoIpPhoneNotifier(FilterListener):
 			queryPayload = queryPayload.encode('utf-8')
 
 			try:
-				urllib.request.urlopen("http://" + distant['client'] + "/admin/bcisco.csc", queryPayload)
+				urllib.request.urlopen("http://" + distant['client'] + distant['uri'], queryPayload)
 			except Exception as exp:
-				logging.error("http://" + distant['client'] + "/admin/bcisco.csc")
+				logging.error("http://" + distant['client'] + distant['uri'])
 				logging.exception('Exception while notify client')
